@@ -117,7 +117,7 @@ with col2:
         st.error(f"데이터 조회 중 오류 발생: {str(e)}")
 
 # 2. AI 기반 개인 맞춤형 분석 및 추천
-st.header('2. AI 기반 개인 맞춤형 분석 및 추천')
+st.markdown('<p class="icon-title"><i class="fas fa-brain"></i> AI 기반 개인 맞춤형 분석 및 추천</p>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -149,7 +149,7 @@ with col2:
         st.error(f"추천 생성 중 오류 발생: {str(e)}")
 
 # 3. 게이미피케이션 요소
-st.header('3. 게이미피케이션 요소')
+st.markdown('<p class="icon-title"><i class="fas fa-gamepad"></i> 게이미피케이션 요소</p>', unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -199,8 +199,9 @@ with col3:
     except Exception as e:
         st.error(f"절약량 계산 중 오류 발생: {str(e)}")
 
+
 # 4. 커뮤니티 기능
-st.header('4. 커뮤니티 기능')
+st.markdown('<p class="icon-title"><i class="fas fa-users"></i> 커뮤니티 기능</p>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -217,8 +218,9 @@ with col2:
     fig.update_layout(title='지역별 월간 물 절약량', xaxis_title='지역', yaxis_title='절약량 (L)')
     st.plotly_chart(fig)
 
+
 # 5. 환경 영향 시각화
-st.header('5. 환경 영향 시각화')
+st.markdown('<p class="icon-title"><i class="fas fa-leaf"></i> 환경 영향 시각화</p>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -237,8 +239,9 @@ with col2:
     st.write(f'당신의 노력으로 {water_saved}L의 물을 절약했습니다.')
     st.write(f'이는 {water_saved // 2}명의 하루 물 사용량과 같습니다.')
 
+
 # 6. 스마트홈 연동
-st.header('6. 스마트홈 연동')
+st.markdown('<p class="icon-title"><i class="fas fa-home"></i> 스마트홈 연동</p>', unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 
 with col1:
