@@ -63,9 +63,20 @@ except sqlite3.Error as e:
     st.error(f"데이터베이스 파일 존재 여부: {os.path.exists(DB_FILE)}")
     st.stop()
 
+# Font Awesome CSS 추가
+st.markdown("""
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+    .icon-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # 1. 실시간 물 사용량 모니터링
-st.header('1. 실시간 물 사용량 모니터링')
-col1, col2 = st.columns(2)
+st.markdown('<p class="icon-title"><i class="fas fa-tachometer-alt"></i> 실시간 물 사용량 모니터링</p>', unsafe_allow_html=True)
+
 
 with col1:
     # 시간대별 사용량
