@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
 st.set_page_config(layout="wide")
@@ -17,9 +16,8 @@ with col1:
         'hour': range(24),
         'usage': np.random.randint(10, 100, 24)
     })
-    fig = go.Figure(data=go.Bar(x=hourly_data['hour'], y=hourly_data['usage']))
-    fig.update_layout(title='시간대별 물 사용량', xaxis_title='시간', yaxis_title='사용량 (L)')
-    st.plotly_chart(fig)
+    st.bar_chart(hourly_data.set_index('hour'))
+    st.write('시간대별 물 사용량')
 
 with col2:
     # 요일별 사용량
@@ -27,9 +25,8 @@ with col2:
         'day': ['월', '화', '수', '목', '금', '토', '일'],
         'usage': np.random.randint(500, 1000, 7)
     })
-    fig = go.Figure(data=go.Bar(x=daily_data['day'], y=daily_data['usage']))
-    fig.update_layout(title='요일별 물 사용량', xaxis_title='요일', yaxis_title='사용량 (L)')
-    st.plotly_chart(fig)
+    st.bar_chart(daily_data.set_index('day'))
+    st.write('요일별 물 사용량')
 
 # 2. AI 기반 개인 맞춤형 분석 및 추천
 st.header('2. AI 기반 개인 맞춤형 분석 및 추천')
@@ -95,12 +92,8 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader('CO2 감축량')
     co2_reduced = st.number_input('물 절약으로 인한 CO2 감축량 (kg)', value=50)
-    fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = co2_reduced,
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "CO2 감축량 (kg)"}))
-    st.plotly_chart(fig)
+    st.write(f"CO2 감축량: {co2_reduced} kg")
+    st.progress(co2_reduced / 100)  # Assuming 100kg is the maximum
 
 with col2:
     st.subheader('지역 수자원 영향')
