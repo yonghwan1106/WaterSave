@@ -76,7 +76,7 @@ st.markdown("""
 
 # 1. 실시간 물 사용량 모니터링
 st.markdown('<p class="icon-title"><i class="fas fa-tachometer-alt"></i> 실시간 물 사용량 모니터링</p>', unsafe_allow_html=True)
-
+col1, col2 = st.columns(2)
 
 with col1:
     # 시간대별 사용량
