@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
 
 st.title('워터세이브(WaterSave) 앱')
 
@@ -29,8 +28,8 @@ if st.button('공유하기'):
 # 5. 환경 영향 시각화
 st.header('환경 영향')
 col1, col2 = st.columns(2)
-col1.metric('CO2 감축량', '50kg', '↑ 2kg')
-col2.metric('절약한 물', '1000L', '↑ 100L')
+col1.metric('CO2 감축량', '50kg', '2kg')
+col2.metric('절약한 물', '1000L', '100L')
 
 # 6. 스마트홈 연동
 st.header('스마트홈 연동')
