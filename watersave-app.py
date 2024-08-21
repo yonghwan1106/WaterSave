@@ -15,39 +15,53 @@ DB_FILE = os.environ.get('DB_FILE', 'water_usage.db')
 
 # 데이터베이스 초기화 함수
 def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    
-    # water_usage 테이블 생성
-    c.execute('''CREATE TABLE IF NOT EXISTS water_usage
-                 (timestamp TEXT, usage REAL)''')
-    
-    # user_info 테이블 생성
-    c.execute('''CREATE TABLE IF NOT EXISTS user_info
-                 (key TEXT PRIMARY KEY, value TEXT)''')
-    
-    # 초기 데이터 삽입 (테스트용)
-    c.execute("INSERT OR IGNORE INTO user_info (key, value) VALUES (?, ?)", 
-              ('daily_goal', '200'))
-    c.execute("INSERT OR IGNORE INTO user_info (key, value) VALUES (?, ?)", 
-              ('weekly_challenge', '설거지 물 사용량 20% 줄이기'))
-    
-    # 테스트용 water_usage 데이터 삽입
-    current_time = datetime.now()
-    for i in range(24 * 7):  # 일주일치 데이터
-        timestamp = (current_time - timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
-        usage = np.random.uniform(0.5, 3.0)
-        c.execute("INSERT OR IGNORE INTO water_usage (timestamp, usage) VALUES (?, ?)", 
-                  (timestamp, usage))
-    
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        
+        # water_usage 테이블 생성
+        c.execute('''CREATE TABLE IF NOT EXISTS water_usage
+                     (timestamp TEXT, usage REAL)''')
+        
+        # user_info 테이블 생성
+        c.execute('''CREATE TABLE IF NOT EXISTS user_info
+                     (key TEXT PRIMARY KEY, value TEXT)''')
+        
+        # 초기 데이터 삽입 (테스트용)
+        c.execute("INSERT OR IGNORE INTO user_info (key, value) VALUES (?, ?)", 
+                  ('daily_goal', '200'))
+        c.execute("INSERT OR IGNORE INTO user_info (key, value) VALUES (?, ?)", 
+                  ('weekly_challenge', '설거지 물 사용량 20% 줄이기'))
+        
+        # 테스트용 water_usage 데이터 삽입
+        current_time = datetime.now()
+        for i in range(24 * 7):  # 일주일치 데이터
+            timestamp = (current_time - timedelta(hours=i)).strftime('%Y-%m-%d %H:%M:%S')
+            usage = np.random.uniform(0.5, 3.0)
+            c.execute("INSERT OR IGNORE INTO water_usage (timestamp, usage) VALUES (?, ?)", 
+                      (timestamp, usage))
+        
+        conn.commit()
+        conn.close()
+        st.success("데이터베이스가 성공적으로 초기화되었습니다.")
+    except sqlite3.Error as e:
+        st.error(f"데이터베이스 초기화 중 오류 발생: {e}")
+        st.error(f"현재 작업 디렉토리: {os.getcwd()}")
+        st.error(f"데이터베이스 파일 존재 여부: {os.path.exists(DB_FILE)}")
+        st.stop()
 
 # 앱 시작 시 데이터베이스 초기화
 init_db()
 
 # 데이터베이스 연결
-conn = sqlite3.connect(DB_FILE)
+try:
+    conn = sqlite3.connect(DB_FILE)
+    st.success("데이터베이스에 성공적으로 연결되었습니다.")
+except sqlite3.Error as e:
+    st.error(f"데이터베이스 연결 중 오류 발생: {e}")
+    st.error(f"현재 작업 디렉토리: {os.getcwd()}")
+    st.error(f"데이터베이스 파일 존재 여부: {os.path.exists(DB_FILE)}")
+    st.stop()
 
 # 1. 실시간 물 사용량 모니터링
 st.header('1. 실시간 물 사용량 모니터링')
