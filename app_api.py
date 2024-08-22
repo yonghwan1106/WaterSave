@@ -8,7 +8,8 @@ import os
 from anthropic import AsyncAnthropic, HUMAN_PROMPT, AI_PROMPT
 import asyncio
 import json
-from googletrans import Translator
+from deep_translator import GoogleTranslator
+
 
 # 페이지 설정
 st.set_page_config(layout="wide")
@@ -175,12 +176,12 @@ def environmental_impact():
 # 다국어 지원 및 문화적 맥락화
 def multilingual_support():
     st.header('다국어 지원 및 문화적 맥락화')
-    translator = Translator()
-    languages = {'한국어': 'ko', '영어': 'en', '일본어': 'ja', '중국어': 'zh-cn'}
+    languages = {'한국어': 'ko', '영어': 'en', '일본어': 'ja', '중국어': 'zh-CN'}
     selected_lang = st.selectbox('언어를 선택하세요:', list(languages.keys()))
     
     tip = "물을 절약하는 가장 좋은 방법은 짧은 샤워를 하는 것입니다."
-    translated_tip = translator.translate(tip, dest=languages[selected_lang]).text
+    translator = GoogleTranslator(source='ko', target=languages[selected_lang])
+    translated_tip = translator.translate(tip)
     st.write(translated_tip)
 
 # 지능형 보고서 생성
