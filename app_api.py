@@ -18,9 +18,10 @@ st.title('워터세이브(WaterSave) 앱')
 # API 키 입력
 api_key = st.sidebar.text_input("Claude API 키를 입력하세요:", type="password")
 if api_key:
-    client = anthropic.Client(api_key=api_key)
+    client = Anthropic(api_key=api_key)
 else:
     st.sidebar.warning("API 키를 입력해주세요.")
+    client = None
 
 # 데이터베이스 파일 경로
 DB_FILE = os.environ.get('DB_FILE', 'water_usage.db')
@@ -63,11 +64,10 @@ conn = sqlite3.connect(DB_FILE)
 
 # Claude API를 사용한 지능형 어시스턴트 함수
 def claude_assistant(prompt):
-    if not api_key:
+    if not client:
         return "API 키를 입력해주세요."
     
     try:
-        client = Anthropic(api_key=api_key)
         response = client.completions.create(
             model="claude-2",
             max_tokens_to_sample=150,
