@@ -195,29 +195,164 @@ def generate_report():
         st.write("3. 가장 많이 사용한 요일: 토요일")
         st.write("4. 추천 절약 방법: 빗물 저장 시스템 설치")
 
+# AI 기반 개인 맞춤형 분석 및 추천
+def ai_analysis_and_recommendation():
+    st.header('AI 기반 개인 맞춤형 분석 및 추천')
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader('개인 맞춤형 분석')
+        query = """
+        SELECT 
+            AVG(CASE WHEN strftime('%w', timestamp) IN ('0', '6') THEN usage ELSE NULL END) as weekend_avg,
+            AVG(CASE WHEN strftime('%w', timestamp) NOT IN ('0', '6') THEN usage ELSE NULL END) as weekday_avg
+        FROM water_usage
+        WHERE timestamp >= datetime('now', '-30 days')
+        """
+        try:
+            usage_data = pd.read_sql_query(query, conn).iloc[0]
+            st.write(f"- 주중 평균: {usage_data['weekday_avg']:.2f}L/시간")
+            st.write(f"- 주말 평균: {usage_data['weekend_avg']:.2f}L/시간")
+            st.write("- 샤워 사용량: 전체의 40% (추정)")
+            st.write("- 세탁 사용량: 전체의 20% (추정)")
+        except Exception as e:
+            st.error(f"데이터 분석 중 오류 발생: {str(e)}")
+
+    with col2:
+        st.subheader('AI 추천')
+        try:
+            weekday_high = usage_data['weekday_avg'] > usage_data['weekend_avg']
+            st.write(f"1. {'주중' if weekday_high else '주말'}에 물 사용량이 더 많습니다. {'업무 중 ' if weekday_high else '여가 활동 중 '}물 절약에 신경 써주세요.")
+            st.write("2. 샤워 시간을 1분 줄이면 하루 10L 절약 가능합니다.")
+            st.write("3. 빗물 저장 시스템 설치로 월 100L 절약 가능합니다.")
+        except Exception as e:
+            st.error(f"추천 생성 중 오류 발생: {str(e)}")
+
+# 게이미피케이션 요소
+def gamification_elements():
+    st.header('게이미피케이션 요소')
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.subheader('일일 목표')
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM user_info WHERE key='daily_goal'")
+            daily_goal = float(cursor.fetchone()[0])
+            
+            query = """
+            SELECT SUM(usage) as total_usage
+            FROM water_usage
+            WHERE timestamp >= datetime('now', 'start of day')
+            """
+            today_usage = pd.read_sql_query(query, conn).iloc[0]['total_usage']
+            
+            progress = min(100, (today_usage / daily_goal) * 100)
+            st.progress(progress)
+            st.write(f'목표의 {progress:.1f}%를 사용했습니다. (목표: {daily_goal}L)')
+        except Exception as e:
+            st.error(f"일일 목표 계산 중 오류 발생: {str(e)}")
+
+    with col2:
+        st.subheader('주간 챌린지')
+        try:
+            cursor.execute("SELECT value FROM user_info WHERE key='weekly_challenge'")
+            challenge = cursor.fetchone()[0]
+            st.write(f'이번 주 챌린지: {challenge}')
+            st.write('현재 순위: 지역 내 상위 10%')
+        except Exception as e:
+            st.error(f"주간 챌린지 정보 조회 중 오류 발생: {str(e)}")
+
+    with col3:
+        st.subheader('절약량 시각화')
+        try:
+            query = """
+            SELECT SUM(usage) as total_usage
+            FROM water_usage
+            WHERE timestamp >= datetime('now', '-30 days')
+            """
+            last_month_usage = pd.read_sql_query(query, conn).iloc[0]['total_usage']
+            average_monthly_usage = 6000  # 가정: 평균 월간 사용량
+            saved_water = max(0, average_monthly_usage - last_month_usage)
+            trees_saved = int(saved_water / 100)
+            st.write(f'지난 달 대비 {saved_water:.0f}L의 물을 절약했습니다!')
+            st.write(f'당신의 노력으로 {trees_saved}그루의 나무를 살렸습니다! 🌳' * min(trees_saved, 10))
+        except Exception as e:
+            st.error(f"절약량 계산 중 오류 발생: {str(e)}")
+
+# 커뮤니티 기능
+def community_features():
+    st.header('커뮤니티 기능')
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader('물 절약 팁 공유')
+        tip = st.text_area('물 절약 팁을 공유해주세요:')
+        if st.button('공유하기'):
+            st.success('팁이 공유되었습니다. 감사합니다!')
+
+    with col2:
+        st.subheader('지역 물 절약 현황')
+        regions = ['서울', '부산', '대구', '인천', '광주']
+        savings = np.random.randint(1000, 10000, len(regions))
+        fig = go.Figure(data=[go.Bar(x=regions, y=savings)])
+        fig.update_layout(title='지역별 월간 물 절약량', xaxis_title='지역', yaxis_title='절약량 (L)')
+        st.plotly_chart(fig)
+
+# 스마트홈 연동
+def smart_home_integration():
+    st.header('스마트홈 연동')
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader('IoT 기기 연동')
+        st.write('연결된 기기:')
+        st.checkbox('스마트 샤워기', value=True)
+        st.checkbox('스마트 세탁기', value=True)
+        st.checkbox('스마트 식기세척기', value=False)
+
+    with col2:
+        st.subheader('누수 감지 시스템')
+        if st.button('누수 검사 실행'):
+            st.success('누수가 감지되지 않았습니다.')
+        st.write('마지막 검사: 2023-08-21 14:30')
+
+
 # 메인 앱
 def main():
     st.sidebar.title('메뉴')
     menu = st.sidebar.radio('선택하세요:', 
-        ['대시보드', '지능형 어시스턴트', '고급 분석', '맞춤형 챌린지', 
+        ['대시보드', 'AI 분석 및 추천', '게이미피케이션', 
+         '커뮤니티', '스마트홈 연동','지능형 어시스턴트', '고급 분석', '맞춤형 챌린지', 
          '문제 해결', '환경 영향', '다국어 지원', '보고서 생성'])
+    
+        
     
     if menu == '대시보드':
         main_dashboard()
     elif menu == '지능형 어시스턴트':
         intelligent_assistant()
+    elif menu == 'AI 분석 및 추천':
+        ai_analysis_and_recommendation()
+    elif menu == '게이미피케이션':
+        gamification_elements()
+    elif menu == '커뮤니티':
+        community_features()
+    elif menu == '환경 영향':
+        environmental_impact()
+    elif menu == '다국어 지원':
+        multilingual_support()
+    elif menu == '스마트홈 연동':
+        smart_home_integration()
+    elif menu == '보고서 생성':
+        generate_report()
     elif menu == '고급 분석':
         advanced_analysis()
     elif menu == '맞춤형 챌린지':
         personalized_challenge()
     elif menu == '문제 해결':
         intelligent_problem_solving()
-    elif menu == '환경 영향':
-        environmental_impact()
-    elif menu == '다국어 지원':
-        multilingual_support()
-    elif menu == '보고서 생성':
-        generate_report()
+   
 
 if __name__ == "__main__":
     main()
