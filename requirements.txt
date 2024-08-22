@@ -2,5 +2,6 @@ streamlit
 pandas
 numpy
 plotly
-googletrans==3.1.0a0
-anthropic>=0.7.0
+deep_translator
+anthropic==0.3.0
+httpx>=0.23.0,<1
