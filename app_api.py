@@ -69,7 +69,7 @@ def claude_assistant(prompt):
     
     try:
         response = client.completions.create(
-            model="claude-3.5",
+            model="claude-3-opus-20240229",
             max_tokens_to_sample=150,
             prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
         )
