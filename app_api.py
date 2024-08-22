@@ -65,13 +65,15 @@ def claude_assistant(prompt):
         return "API 키를 입력해주세요."
     
     try:
-        response = client.completion(
-            prompt=f"Human: {prompt}\n\nAssistant:",
-            model="claude-2",
-            max_tokens_to_sample=150,
-            stop_sequences=["Human:", "Assistant:"]
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-3.5-20240229",
+            max_tokens=150,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
         )
-        return response.completion.strip()
+        return message.content[0].text
     except Exception as e:
         return f"오류가 발생했습니다: {str(e)}"
 
