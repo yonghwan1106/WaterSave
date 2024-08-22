@@ -1,4 +1,6 @@
-streamlit>=1.22.0
-pandas>=1.5.3
-numpy>=1.24.3
-plotly>=5.10.0
+streamlit
+pandas
+numpy
+plotly
+googletrans==3.1.0a0
+anthropic
