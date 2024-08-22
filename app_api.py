@@ -61,13 +61,13 @@ init_db()
 conn = sqlite3.connect(DB_FILE)
 
 # Claude API를 사용한 지능형 어시스턴트 함수
-async def claude_assistant(prompt):
+def claude_assistant(prompt):
     if not api_key:
         return "API 키를 입력해주세요."
     
     try:
-        client = AsyncAnthropic(api_key=api_key)
-        response = await client.completions.create(
+        client = Anthropic(api_key=api_key)
+        response = client.completions.create(
             model="claude-3-opus-20240229",
             max_tokens_to_sample=150,
             prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
@@ -125,7 +125,7 @@ def intelligent_assistant():
         avg_usage = pd.read_sql_query(query, conn).iloc[0]['avg_usage']
         
         prompt = f"사용자의 평균 물 사용량은 {avg_usage:.2f}L/시간입니다. 다음 질문에 답해주세요: {user_question}"
-        response = asyncio.run(claude_assistant(prompt))
+        response = claude_assistant(prompt)
         st.write(response)
 
 # 고급 데이터 분석 및 예측
