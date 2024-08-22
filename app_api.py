@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import sqlite3
 import os
-from anthropic import AsyncAnthropic, HUMAN_PROMPT, AI_PROMPT
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import asyncio
 import json
 from deep_translator import GoogleTranslator
@@ -69,7 +69,7 @@ def claude_assistant(prompt):
     try:
         client = Anthropic(api_key=api_key)
         response = client.completions.create(
-            model="claude-3-opus-20240229",
+            model="claude-2",
             max_tokens_to_sample=150,
             prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
         )
