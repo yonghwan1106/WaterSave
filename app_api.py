@@ -174,7 +174,7 @@ def environmental_impact():
     st.write(f"{years}년 후에는 총 {long_term_effect:,}L의 물을 절약할 수 있습니다!")
 
 # 5. 환경 영향 시각화
-    def environmental_visual():
+def environmental_visual():
     st.header('5. 환경 영향 시각화')
     col1, col2 = st.columns(2)
 
