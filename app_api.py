@@ -173,6 +173,27 @@ def environmental_impact():
     long_term_effect = saved_water * 12 * years
     st.write(f"{years}년 후에는 총 {long_term_effect:,}L의 물을 절약할 수 있습니다!")
 
+# 5. 환경 영향 시각화
+def environmental_visual():
+st.header('5. 환경 영향 시각화')
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader('CO2 감축량')
+    co2_reduced = st.number_input('물 절약으로 인한 CO2 감축량 (kg)', value=50)
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = co2_reduced,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': "CO2 감축량 (kg)"}))
+    st.plotly_chart(fig)
+
+with col2:
+    st.subheader('지역 수자원 영향')
+    water_saved = st.number_input('절약한 물의 양 (L)', value=1000)
+    st.write(f'당신의 노력으로 {water_saved}L의 물을 절약했습니다.')
+    st.write(f'이는 {water_saved // 2}명의 하루 물 사용량과 같습니다.')
+
 # 다국어 지원 및 문화적 맥락화
 def multilingual_support():
     st.header('다국어 지원 및 문화적 맥락화')
@@ -324,7 +345,7 @@ def main():
     menu = st.sidebar.radio('선택하세요:', 
         ['대시보드', 'AI 분석 및 추천', '게이미피케이션', 
          '커뮤니티', '스마트홈 연동','지능형 어시스턴트', '고급 분석', '맞춤형 챌린지', 
-         '문제 해결', '환경 영향', '다국어 지원', '보고서 생성'])
+         '문제 해결', '환경 영향 시뮬레이션', '환경 영향 시각화','다국어 지원', '보고서 생성'])
     
         
     
@@ -338,8 +359,10 @@ def main():
         gamification_elements()
     elif menu == '커뮤니티':
         community_features()
-    elif menu == '환경 영향':
+    elif menu == '환경 영향 시뮬레이션':
         environmental_impact()
+    elif menu == '환경 영향 시각화':
+        environmental_visual()
     elif menu == '다국어 지원':
         multilingual_support()
     elif menu == '스마트홈 연동':
