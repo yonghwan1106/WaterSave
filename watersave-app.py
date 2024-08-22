@@ -114,45 +114,25 @@ with col1:
     X = usage_data['day'].values.reshape(-1, 1)
     y = usage_data['daily_usage'].values
     
-    from sklearn.linear_model import LinearRegression
-    model = LinearRegression()
-    model.fit(X, y)
-    
-    future_days = 7
-    future_X = np.array(range(len(usage_data), len(usage_data) + future_days)).reshape(-1, 1)
-    future_y = model.predict(future_X)
-    
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=usage_data['date'], y=usage_data['daily_usage'], mode='lines', name='실제 사용량'))
-    fig.add_trace(go.Scatter(x=pd.date_range(start=usage_data['date'].iloc[-1] + pd.Timedelta(days=1), periods=future_days), 
-                             y=future_y, mode='lines', name='예측 사용량'))
-    fig.update_layout(title='물 사용량 예측', xaxis_title='날짜', yaxis_title='일일 사용량 (L)')
-    st.plotly_chart(fig)
-
-with col2:
-    st.markdown('<p class="subsection-title">이상 징후 감지</p>', unsafe_allow_html=True)
-    # 간단한 이상 징후 감지 (평균에서 2표준편차 이상 벗어난 경우)
-    mean = usage_data['daily_usage'].mean()
-    std = usage_data['daily_usage'].std()
-    threshold = mean + 2 * std
-    
-    anomalies = usage_data[usage_data['daily_usage'] > threshold]
-    
-    if not anomalies.empty:
-        st.write("다음 날짜에 이상적으로 높은 물 사용량이 감지되었습니다:")
-        for _, row in anomalies.iterrows():
-            st.write(f"- {row['date'].strftime('%Y-%m-%d')}: {row['daily_usage']:.2f}L")
+    try:
+        from sklearn.linear_model import LinearRegression
+        model = LinearRegression()
+        model.fit(X, y)
         
-        prompt = f"""
-        사용자의 평균 물 사용량: {mean:.2f}L/일
-        이상 징후가 감지된 날짜와 사용량: {', '.join([f"{row['date'].strftime('%Y-%m-%d')}: {row['daily_usage']:.2f}L" for _, row in anomalies.iterrows()])}
+        future_days = 7
+        future_X = np.array(range(len(usage_data), len(usage_data) + future_days)).reshape(-1, 1)
+        future_y = model.predict(future_X)
         
-        위 정보를 바탕으로 이상 징후의 가능한 원인과 해결 방안을 제시해주세요.
-        """
-        response = call_claude_api(prompt)
-        st.write("분석 결과:", response)
-    else:
-        st.write("최근 30일간 이상적인 물 사용량은 감지되지 않았습니다.")
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=usage_data['date'], y=usage_data['daily_usage'], mode='lines', name='실제 사용량'))
+        fig.add_trace(go.Scatter(x=pd.date_range(start=usage_data['date'].iloc[-1] + pd.Timedelta(days=1), periods=future_days), 
+                                 y=future_y, mode='lines', name='예측 사용량'))
+        fig.update_layout(title='물 사용량 예측', xaxis_title='날짜', yaxis_title='일일 사용량 (L)')
+        st.plotly_chart(fig)
+    except ImportError:
+        st.error("scikit-learn 라이브러리가 설치되지 않아 예측을 수행할 수 없습니다. 관리자에게 문의하세요.")
+        # 대체 메시지 또는 간단한 통계 표시
+        st.write("최근 30일 평균 사용량:", usage_data['daily_usage'].mean())
 
 # 3. 맞춤형 절약 챌린지 생성
 st.markdown('<p class="section-title">3. 맞춤형 절약 챌린지</p>', unsafe_allow_html=True)
