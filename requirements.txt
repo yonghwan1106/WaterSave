@@ -3,4 +3,4 @@ pandas
 numpy
 plotly
 googletrans==3.1.0a0
-anthropic
+anthropic>=0.7.0
